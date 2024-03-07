@@ -1,0 +1,144 @@
+# use the official gcc image, based on debian
+# can use verions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
+image: gcc
+
+build:
+  tags:
+    - ugrad
+  stage: build
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - rm -f *.o
+    - make xas
+    - if [ -f CMakeLists.txt ]; then cmake CMakeLists.txt; fi
+    - make
+  artifacts:
+    paths:
+      - xtra/xtra
+      - xtra/xas
+
+test_00:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 00 . xtra
+
+test_01:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 01 . xtra
+
+test_02:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 02 . xtra
+
+test_03:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 03 . xtra
+
+test_04:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 04 . xtra
+
+test_05:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 05 . xtra
+
+test_06:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 06 . xtra
+
+test_07:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 07 . xtra
+
+test_08:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 08 . xtra
+
+test_09:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 09 . xtra
+
+test_10:
+  tags:
+    - ugrad
+  stage: test
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /NOTEST/
+  script:
+    - cd xtra
+    - ./tests/test.sh 10 . xtra
+
