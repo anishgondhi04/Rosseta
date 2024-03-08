@@ -6,12 +6,22 @@
 
 EXE=xtra
 
+if [ ! -x ./xas ]; then
+  make xas
+  if [ ! -x ./xas ]; then
+    echo Error, could not build the assembler, xas.  Contact the professor.
+    exit 1
+  fi
+fi
+  
 if [ -x $EXE ]; then
         EXECDIR=.
 elif [ -x  cmake-build-debug/$EXE ]; then
         EXECDIR=cmake-build-debug
 else
         echo Cannot find $EXE
+        echo You may need to build it first.
+        echo Try running make.
         exit
 fi
 
