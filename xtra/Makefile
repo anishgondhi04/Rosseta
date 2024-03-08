@@ -1,7 +1,7 @@
 # Targets & general dependencies
 PROGRAM = xtra
-HEADERS = xis.h xtra.h
-OBJS = main.o xtra.o
+HEADERS = xis.h 
+OBJS = main.o 
 ADD_OBJS = 
 
 # compilers, linkers, utilities, and flags
