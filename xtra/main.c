@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include "xtra.h"
+#include "extra.h"
 
 int main(int argc, char **argv) {
     if (argc <= 1) {

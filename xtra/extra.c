@@ -4,17 +4,43 @@
 
 #include <stdio.h>
 #include "xis.h"
-#include "xtra.h"
+#include "extra.h"
+
 
 void xtra(FILE *file) {
+
+    char *reg_map64[] = {
+            "%rax",
+            "%rbx",
+            "%rcx",
+            "%rdx",
+            "%rsi",
+            "%rdi",
+            "%r8 ",
+            "%r9 ",
+            "%r10",
+            "%r11",
+            "%r12",
+            "%r13",
+            "%r14",
+            "%r15",  // flags
+            "%rbp",  // r14  frame pointer
+            "%rsp",  // r15  stack pointer
+            "%rip"
+    };
+
 
     char instruction[2];
     int flag = 0;
 
 
     while (fread(instruction, sizeof(char), 2, file) >= 2) {
+        if(instruction[0] == 0x00 && instruction[1] == 0x00){
+            break;
+        }
+
         int no_of_operands, bit, reg, source, dest;
-        no_of_operands = (instruction[0] >> 6) & 0xf;
+        no_of_operands = (instruction[0] >> 6) & 3;
 
         if (flag) {
             printf("    call debug\n");
@@ -46,22 +72,22 @@ void xtra(FILE *file) {
                     reg = (instruction[1] >> 4) & 0xf;
                     switch ((int)instruction[0]) {
                         case I_NEG:
-                            printf("neg %s", reg_map64[reg]);
+                            printf("neg %s\n", reg_map64[reg]);
                             break;
                         case I_NOT:
-                            printf("neg %s", reg_map64[reg]);
+                            printf("neg %s\n", reg_map64[reg]);
                             break;
                         case I_INC:
-                            printf("inc %s", reg_map64[reg]);
+                            printf("inc %s\n", reg_map64[reg]);
                             break;
                         case I_DEC:
-                            printf("dec %s", reg_map64[reg]);
+                            printf("dec %s\n", reg_map64[reg]);
                             break;
                         case I_PUSH:
-                            printf("push %s", reg_map64[reg]);
+                            printf("push %s\n", reg_map64[reg]);
                             break;
                         case I_POP:
-                            printf("pop %s", reg_map64[reg]);
+                            printf("pop %s\n", reg_map64[reg]);
                             break;
                         case I_OUT:
                             break;
@@ -74,46 +100,46 @@ void xtra(FILE *file) {
 
                 switch ((int)instruction[0]) {
                     case I_ADD:
-                        printf("add %s, %s", reg_map64[source], reg_map64[dest]);
+                        printf("add %s, %s\n", reg_map64[source], reg_map64[dest]);
                         break;
                     case I_SUB:
-                        printf("sub %s, %s", reg_map64[source], reg_map64[dest]);
+                        printf("sub %s, %s\n", reg_map64[source], reg_map64[dest]);
                         break;
                     case I_MUL:
-                        printf("imul %s, %s", reg_map64[source], reg_map64[dest]);
+                        printf("imul %s, %s\n", reg_map64[source], reg_map64[dest]);
                         break;
                     case I_AND:
-                        printf("add %s, %s", reg_map64[source], reg_map64[dest]);
+                        printf("add %s, %s\n", reg_map64[source], reg_map64[dest]);
                         break;
                     case I_OR:
-                        printf("or %s, %s",reg_map64[source],reg_map64[dest]);
+                        printf("or %s, %s\n",reg_map64[source],reg_map64[dest]);
                         break;
                     case I_XOR:
-                        printf("xor %s, %s",reg_map64[source],reg_map64[dest]);
+                        printf("xor %s, %s\n",reg_map64[source],reg_map64[dest]);
                         break;
                     case I_TEST:
                         if((source & dest) != 0 ){
-                            printf("mov $0x1, %s",reg_map64[13]);
+                            printf("mov $0x1, %s\n",reg_map64[13]);
                         }else{
-                            printf("mov $0x0, %s",reg_map64[13]);
+                            printf("mov $0x0, %s\n",reg_map64[13]);
                         }
                         break;
                     case I_CMP:
                         if(source < dest){
-                            printf("mov $0x1, %s",reg_map64[13]);
+                            printf("mov $0x1, %s\n",reg_map64[13]);
                         }else{
-                            printf("mov $0x0, %s",reg_map64[13]);
+                            printf("mov $0x0, %s\n",reg_map64[13]);
                         }
                         break;
                     case I_EQU:
                         if(source == dest){
-                            printf("mov $0x1, %s",reg_map64[13]);
+                            printf("mov $0x1, %s\n",reg_map64[13]);
                         }else{
-                            printf("mov $0x0, %s",reg_map64[13]);
+                            printf("mov $0x0, %s\n",reg_map64[13]);
                         }
                         break;
                     case I_MOV:
-                        printf("mov %s, %s",reg_map64[source],reg_map64[dest]);
+                        printf("mov %s, %s\n",reg_map64[source],reg_map64[dest]);
                         break;
                     case I_LOAD:
                         break;
