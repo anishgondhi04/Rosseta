@@ -33,28 +33,30 @@ void xtra(FILE *file) {
     char instruction[2];
     int flag = 0;
 
-
     while (fread(instruction, sizeof(char), 2, file) >= 2) {
         char word[2];
-        int source, dest,val;
+        int source, dest,inst_f,inst_l,val;
+
+        inst_f = instruction[0] & 0xff;
+        inst_l = instruction[1] & 0xff;
 
         if (flag) {
             printf("    call debug\n");
         }
-        if (instruction[0] == 0x00 && instruction[1] == 0x00) {
+        if (inst_f == 0x00 && inst_l == 0x00) {
             break;
         }
-        if (((instruction[0] >> 6) & 0x03) == XIS_EXTENDED) {
+        if (((inst_f >> 6) & 0x03) == XIS_EXTENDED) {
             fread(word, sizeof(char),2,file);
+            val = word[0] & 0xff;
+            val = val << 8;
+            val |= (word[1] & 0xff);
         }
 
-        source = (instruction[1] >> 4) & 0xf;
-        dest = instruction[1] & 0x0f;
+        source = (inst_l >> 4) & 0xf;
+        dest = inst_l & 0x0f;
 
-        if (flag) {
-            printf("    call debug\n");
-        }
-        switch ((int) instruction[0]) {
+        switch (inst_f) {
             case I_RET:
                 break;
             case I_CLD:
@@ -129,16 +131,14 @@ void xtra(FILE *file) {
             case I_STORB:
                 break;
             case I_JMP:
-                printf("    jmp %s", word);
+                printf("    jmp %d\n", val);
                 break;
             case I_CALL:
-                printf("    call %s", word);
+                printf("    call %d\n", val);
                 break;
             case I_LOADI:
-                printf("    mov $%s, %s",word,reg_map64[source]);
+                printf("    mov $%d, %s\n",val,reg_map64[source]);
                 break;
-
-
         }
 
     }
