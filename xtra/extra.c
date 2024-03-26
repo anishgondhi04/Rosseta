@@ -99,7 +99,7 @@ void xtra(FILE *file) {
                 printf("    imul %s, %s\n", reg_map64[source], reg_map64[dest]);
                 break;
             case I_AND:
-                printf("    add %s, %s\n", reg_map64[source], reg_map64[dest]);
+                printf("    and %s, %s\n", reg_map64[source], reg_map64[dest]);
                 break;
             case I_OR:
                 printf("    or %s, %s\n", reg_map64[source], reg_map64[dest]);
