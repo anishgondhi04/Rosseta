@@ -41,7 +41,7 @@ void xtra(FILE *file) {
     //offset is used to set the labels before each instruction
     char instruction[2];
     int flag = 0;
-    long int offset = 0x0000;
+    int offset = 0x0000;
 
     //This loop runs until the there is no bits left in the file.
     while (fread(instruction, sizeof(char), 2, file) >= 2) {
@@ -50,14 +50,14 @@ void xtra(FILE *file) {
         //source is the first 4 bits in second byte which encodes source register
         //dest is the last 4 bits in second byte which encodes dest register
         char word[2];
-        int source, dest,inst_f,inst_l,val;
+        int source, dest, inst_f, inst_l, val;
 
         //filtering the encoding storing first and last byte separately
         inst_f = instruction[0] & 0xff;
         inst_l = instruction[1] & 0xff;
 
         //printing the label
-        printf(".L%04x:\n",offset);
+        printf(".L%04x:\n", offset);
         offset += 2;
 
         //checking if debug is set
@@ -71,7 +71,7 @@ void xtra(FILE *file) {
 
         //checking if extended
         if (((inst_f >> 6) & 0x03) == XIS_EXTENDED) {
-            fread(word, sizeof(char),2,file);
+            fread(word, sizeof(char), 2, file);
             val = word[0] & 0xff;
             val = val << 8;
             val |= (word[1] & 0xff);
@@ -94,8 +94,11 @@ void xtra(FILE *file) {
                 flag = 1;
                 break;
             case I_BR:
+                printf("    cmpb $0x01, %%r15b\n");
+                printf("    je .L%04x\n", (offset + inst_l - 2));
                 break;
             case I_JR:
+                printf("    jmp .L%04x\n", (offset + inst_l - 2));
                 break;
             case I_NEG:
                 printf("    neg %s\n", reg_map64[source]);
@@ -117,7 +120,7 @@ void xtra(FILE *file) {
                 break;
             case I_OUT:
                 printf("    push %%rdi\n");
-                printf("    mov %s, %%rdi\n",reg_map64[source]);
+                printf("    mov %s, %%rdi\n", reg_map64[source]);
                 printf("    call outchar\n");
                 printf("    pop %%rdi\n");
                 break;
@@ -155,16 +158,16 @@ void xtra(FILE *file) {
                 printf("    mov %s, %s\n", reg_map64[source], reg_map64[dest]);
                 break;
             case I_LOAD:
-                printf("    mov (%s), %s\n",reg_map64[source],reg_map64[dest]);
+                printf("    mov (%s), %s\n", reg_map64[source], reg_map64[dest]);
                 break;
             case I_STOR:
-                printf("    mov %s, (%s)\n",reg_map64[source],reg_map64[dest]);
+                printf("    mov %s, (%s)\n", reg_map64[source], reg_map64[dest]);
                 break;
             case I_LOADB:
-                printf("    movb (%s), %s\n",reg_map64[source],reg_map8[dest]);
+                printf("    movb (%s), %s\n", reg_map64[source], reg_map8[dest]);
                 break;
             case I_STORB:
-                printf("    movb %s, (%s)\n",reg_map8[source],reg_map64[dest]);
+                printf("    movb %s, (%s)\n", reg_map8[source], reg_map64[dest]);
                 break;
             case I_JMP:
                 printf("    jmp .L%04x\n", val);
@@ -173,7 +176,9 @@ void xtra(FILE *file) {
                 printf("    call .L%04x\n", val);
                 break;
             case I_LOADI:
-                printf("    mov $%d, %s\n",val,reg_map64[source]);
+                printf("    mov $%d, %s\n", val, reg_map64[source]);
+                break;
+            default:
                 break;
         }
 
