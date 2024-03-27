@@ -32,6 +32,7 @@ void xtra(FILE *file) {
 
     char instruction[2];
     int flag = 0;
+    long int offset = 0x0000;
 
     while (fread(instruction, sizeof(char), 2, file) >= 2) {
         char word[2];
@@ -39,6 +40,9 @@ void xtra(FILE *file) {
 
         inst_f = instruction[0] & 0xff;
         inst_l = instruction[1] & 0xff;
+
+        printf(".L%04x\n",offset);
+        offset += 2;
 
         if (flag) {
             printf("    call debug\n");
@@ -51,6 +55,7 @@ void xtra(FILE *file) {
             val = word[0] & 0xff;
             val = val << 8;
             val |= (word[1] & 0xff);
+            offset += 2;
         }
 
         source = (inst_l >> 4) & 0xf;
@@ -58,6 +63,7 @@ void xtra(FILE *file) {
 
         switch (inst_f) {
             case I_RET:
+                printf("    ret\n");
                 break;
             case I_CLD:
                 flag = 0;
@@ -109,32 +115,36 @@ void xtra(FILE *file) {
                 break;
             case I_TEST:
                 printf("    test %s, %s\n", reg_map64[source], reg_map64[dest]);
-                printf("    setnz %s\n", reg_map64[13]);
+                printf("    setnz %sb\n", reg_map64[13]);
                 break;
             case I_CMP:
                 printf("    cmp %s, %s\n", reg_map64[source], reg_map64[dest]);
-                printf("    setg %s\n", reg_map64[13]);
+                printf("    setg %sb\n", reg_map64[13]);
                 break;
             case I_EQU:
                 printf("    cmp %s, %s\n", reg_map64[source], reg_map64[dest]);
-                printf("    sete %s\n", reg_map64[13]);
+                printf("    sete %sb\n", reg_map64[13]);
                 break;
             case I_MOV:
                 printf("    mov %s, %s\n", reg_map64[source], reg_map64[dest]);
                 break;
             case I_LOAD:
+                printf("    mov (%s), %s",reg_map64[source],reg_map64[dest]);
                 break;
             case I_STOR:
+                printf("    mov %s, (%s)",reg_map64[source],reg_map64[dest]);
                 break;
             case I_LOADB:
+                printf("    movb (%s), %s",reg_map64[source],reg_map64[dest]);
                 break;
             case I_STORB:
+                printf("    movb %s, (%s)",reg_map64[source],reg_map64[dest]);
                 break;
             case I_JMP:
-                printf("    jmp %d\n", val);
+                printf("    jmp .L%04x\n", val);
                 break;
             case I_CALL:
-                printf("    call %d\n", val);
+                printf("    call .L%04x\n", val);
                 break;
             case I_LOADI:
                 printf("    mov $%d, %s\n",val,reg_map64[source]);
