@@ -94,6 +94,10 @@ void xtra(FILE *file) {
                 printf("    pop %s\n", reg_map64[source]);
                 break;
             case I_OUT:
+                printf("    push %%rdi\n");
+                printf("    mov %s, %%rdi\n",reg_map64[source]);
+                printf("    call outchar\n");
+                printf("    pop %%rdi\n");
                 break;
             case I_ADD:
                 printf("    add %s, %s\n", reg_map64[source], reg_map64[dest]);
