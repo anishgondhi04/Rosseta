@@ -41,7 +41,7 @@ void xtra(FILE *file) {
         inst_f = instruction[0] & 0xff;
         inst_l = instruction[1] & 0xff;
 
-        printf(".L%04x\n",offset);
+        printf(".L%04x:\n",offset);
         offset += 2;
 
         if (flag) {
